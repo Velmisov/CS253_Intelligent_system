@@ -10,9 +10,18 @@
 
 class Solver {
     unsigned long long number_of_explored_nodes;
+    int heur[HEIGHT][WIDTH];
 
+    int calc();
 public:
-    int negamax(const Position& pos, int alpha=-1, int beta=1);
+
+    Solver(): number_of_explored_nodes(0), heur{0} {
+        calc();
+    }
+
+    std::pair<int, int> negamax(const Position& pos, int alpha=-1, int beta=1);
+
+    int heuristic() const;
 };
 
 
