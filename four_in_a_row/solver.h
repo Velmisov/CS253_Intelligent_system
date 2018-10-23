@@ -10,18 +10,26 @@
 
 class Solver {
     unsigned long long number_of_explored_nodes;
-    int heur[HEIGHT][WIDTH];
 
-    int calc();
 public:
 
-    Solver(): number_of_explored_nodes(0), heur{0} {
-        calc();
-    }
+    Solver(): number_of_explored_nodes(0) {}
 
-    std::pair<int, int> negamax(const Position& pos, int alpha=-1, int beta=1);
+    bool gameIsOver(const Position& pos) const;
 
-    int heuristic() const;
+    int checkForStreak(const Position& pos, int player, int streak) const;
+
+    bool horizontalStreak(int row, int col, const Position& pos, int streak) const;
+
+    bool verticalStreak(int row, int col, const Position& pos, int streak) const;
+
+    int diagonalStreak(int row, int col, const Position& pos, int streak) const;
+
+    int heuristic(const Position &pos, int player) const;
+
+    int bestAlpha(int depth, const Position &pos, int player) const;
+
+    std::pair<int, int> bestMove(int depth, const Position &pos, int player) const;
 };
 
 

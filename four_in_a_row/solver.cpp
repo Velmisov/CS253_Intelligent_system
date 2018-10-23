@@ -4,78 +4,135 @@
 
 #include "solver.h"
 
+#include <map>
 
-std::pair<int, int> Solver::negamax(const Position& pos, int alpha, int beta) {
-    ++number_of_explored_nodes;
-
-    if(pos.get_number_of_moves() == BOARD_SIZE)
-        return { 0, 0 };
-
-    for(int x = 0; x < WIDTH; x++) {
-        if (pos.is_winning_move(x))
-            return { x, 1 };
-    }
-
-    int max = (BOARD_SIZE - 1 - pos.get_number_of_moves()) / 2;	// upper bound of our score as we cannot win immediately
-    if(beta > max) {
-        beta = max;                     // there is no need to keep beta above our max possible score.
-        if(alpha >= beta)
-            return { -1, beta };  // prune the exploration if the [alpha;beta] window is empty.
-    }
-
-    for(int x = 0; x < WIDTH; x++) {// compute the score of all possible next move and keep the best one
-        if (pos.can_move(x)) {
-            Position P2(pos);
-            P2.move(x);               // It's opponent turn in P2 position after current player plays x column.
-            auto result = negamax(P2, -beta, -alpha);
-            int score = -result.second; // explore opponent's score within [-beta;-alpha] windows:
-            // no need to have good precision for score better than beta (opponent's score worse than -beta)
-            // no need to check for score worse than alpha (opponent's score worse better than -alpha)
-
-            if (score >= beta)
-                return { x, score };  // prune the exploration if we find a possible move better than what we were looking for.
-            if (score > alpha)
-                alpha = score; // reduce the [alpha;beta] window for next exploration, as we only
-            // need to search for a position that is better than the best so far.
-        }
-    }
-
-    return { -1, alpha };
+bool Solver::gameIsOver(const Position& pos) const {
+    return checkForStreak(pos, 1, 4) >= 1 || checkForStreak(pos, 2, 4) >= 1;
 }
 
-int Solver::calc() {
-    for (int row = 0; row < HEIGHT; ++row) {
-        for (int col = 0; col < WIDTH - 3; ++col) {
-            for (int i = 0; i < 4; ++i) {
-                heur[row][col]++;
-            }
-        }
-    }
-
-    for (int row = 0; row < HEIGHT - 3; ++row) {
-        for (int col = 0; col < WIDTH; ++col) {
-            for (int i = 0; i < 4; ++i) {
-                heur[row][col]++;
-            }
-        }
-    }
-
+int Solver::checkForStreak(const Position& pos, int player, int streak) const {
+    int count = 0;
     for (int row = 0; row < HEIGHT; ++row) {
         for (int col = 0; col < WIDTH; ++col) {
-            if (row + 3 < HEIGHT && col + 3 < WIDTH) {
-                for (int i = 0; i < 4; ++i) {
-                    ++heur[row + i][col + i];
-                }
-            }
-            if (row + 3 < HEIGHT && col - 3 >= 0) {
-                for (int i = 0; i < 4; ++i) {
-                    ++heur[row + i][col - i];
-                }
+            if (pos.board[row][col] == player) {
+                count += horizontalStreak(row, col, pos, streak);
+                count += verticalStreak(row, col, pos, streak);
+                count += diagonalStreak(row, col, pos, streak);
             }
         }
     }
+    return count;
 }
 
-int Solver::heuristic() const {
+bool Solver::horizontalStreak(int row, int col, const Position& pos, int streak) const {
+    int count = 0;
+    for (int j = col; j < WIDTH; ++j) {
+        if (pos.board[row][j] == pos.board[row][col])
+            ++count;
+        else
+            break;
+    }
+    return count >= streak;
+}
 
+bool Solver::verticalStreak(int row, int col, const Position& pos, int streak) const {
+    int count = 0;
+    for (int j = row; j < HEIGHT; ++j) {
+        if (pos.board[j][col] == pos.board[row][col])
+            ++count;
+        else
+            break;
+    }
+    return count >= streak;
+}
+
+int Solver::diagonalStreak(int row, int col, const Position& pos, int streak) const {
+    int result = 0;
+    int count = 0;
+
+    int j = col;
+    for (int i = row; i < HEIGHT; ++i) {
+        if (j > HEIGHT)
+            break;
+        if (pos.board[i][j] == pos.board[row][col])
+            ++count;
+        else
+            break;
+        ++j;
+    }
+
+    if (count >= streak)
+        ++result;
+
+    count = 0;
+    j = col;
+    for (int i = row; i >= 0; --i) {
+        if (j > HEIGHT)
+            break;
+        if (pos.board[i][j] == pos.board[row][col])
+            ++count;
+        else
+            break;
+        ++j;
+    }
+    if (count >= streak)
+        ++result;
+
+    return result;
+}
+
+int Solver::heuristic(const Position &pos, int player) const {
+    int opponent = (player == 1 ? 2 : 1);
+
+    int my_4 = checkForStreak(pos, player, 4);
+    int my_3 = checkForStreak(pos, player, 3);
+    int my_2 = checkForStreak(pos, player, 2);
+    int opp_4 = checkForStreak(pos, opponent, 4);
+
+    if (opp_4 > 0)
+        return -100000;
+    return my_4 * 100000 + my_3 * 100 + my_2;
+}
+
+int Solver::bestAlpha(int depth, const Position &pos, int player) const {
+    if (depth == 0 || gameIsOver(pos))
+        return heuristic(pos, player);
+
+    int opponent = (player == 1 ? 2 : 1);
+
+    int alpha = INT32_MIN;
+    for (int col = 0; col < WIDTH; ++col) {
+        if (!pos.can_move(col))
+            continue;
+
+        Position child = pos;
+        child.move(col);
+        alpha = std::max(alpha, -bestAlpha(depth - 1, child, opponent));
+    }
+    return alpha;
+}
+
+std::pair<int, int> Solver::bestMove(int depth, const Position &pos, int player) const {
+    int opponent = (player == 1 ? 2 : 1);
+
+    std::map<int, int> legal;
+    for (int col = 0; col < WIDTH; ++col) {
+        if (pos.can_move(col)) {
+            Position temp = pos;
+            temp.move(col);
+            legal[col] = -bestAlpha(depth - 1, temp, opponent);
+        }
+    }
+
+    int best_alpha = -999999999;
+    int best_move = -1;
+    for (auto to : legal) {
+        int move = to.first;
+        int alpha = to.second;
+        if (alpha >= best_alpha) {
+            best_alpha = alpha;
+            best_move = move;
+        }
+    }
+    return {best_move, best_alpha};
 }
