@@ -3,6 +3,9 @@
 #include "solver.h"
 using namespace std;
 
+
+const int DEPTH = 8;
+
 int main() {
 
     //auto pos = new Position("333333444444");
@@ -24,7 +27,7 @@ int main() {
         int col;
         if (pos->who_play_now() != player) {
             clock_t FOR_CLOCK = clock();
-            auto res = solver->bestMove(8, *pos, pos->who_play_now());
+            auto res = solver->bestMove(DEPTH, *pos, pos->who_play_now());
 
             cout << "Time spent: " << double(clock() - FOR_CLOCK) / CLOCKS_PER_SEC << " seconds" << endl;
             cout << res.first + 1 << " " << res.second << endl;

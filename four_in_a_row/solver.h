@@ -27,7 +27,7 @@ public:
 
     int heuristic(const Position &pos, int player) const;
 
-    int bestAlpha(int depth, const Position &pos, int player) const;
+    int bestAlpha(int depth, const Position &pos, int player, int barrier) const;
 
     std::pair<int, int> bestMove(int depth, const Position &pos, int player) const;
 };

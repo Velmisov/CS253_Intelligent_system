@@ -94,7 +94,7 @@ int Solver::heuristic(const Position &pos, int player) const {
     return my_4 * 100000 + my_3 * 100 + my_2;
 }
 
-int Solver::bestAlpha(int depth, const Position &pos, int player) const {
+int Solver::bestAlpha(int depth, const Position &pos, int player, int barrier) const {
     if (depth == 0 || gameIsOver(pos))
         return heuristic(pos, player);
 
@@ -106,8 +106,14 @@ int Solver::bestAlpha(int depth, const Position &pos, int player) const {
             continue;
 
         Position child = pos;
-        child.move(col);
-        alpha = std::max(alpha, -bestAlpha(depth - 1, child, opponent));
+        if(pos.is_winning_move(col)){
+            alpha = std::max(alpha, 100000);
+        }else{
+            child.move(col);
+            alpha = std::max(alpha, -bestAlpha(depth - 1, child, opponent, alpha));
+        }
+        if(-alpha < barrier) // ACHTUNG!!!
+            break;
     }
     return alpha;
 }
@@ -120,7 +126,7 @@ std::pair<int, int> Solver::bestMove(int depth, const Position &pos, int player)
         if (pos.can_move(col)) {
             Position temp = pos;
             temp.move(col);
-            legal[col] = -bestAlpha(depth - 1, temp, opponent);
+            legal[col] = -bestAlpha(depth - 1, temp, opponent, INT32_MIN); // ACHTUNG!!!
         }
     }
 
