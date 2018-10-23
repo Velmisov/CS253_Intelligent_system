@@ -16,10 +16,6 @@ Position::Position(string field): board{0}, filled{0}, number_of_moves(0) {
     }
 }
 
-int Position::get_number_of_moves() const {
-    return number_of_moves;
-}
-
 bool Position::can_move(int column) const {
     return filled[column] < HEIGHT;
 }
@@ -64,11 +60,16 @@ bool Position::is_winning_move(int column) const {
 void Position::show() const {
     cout << endl;
     for (int row = 0; row < HEIGHT; ++row) {
+        cout << "| ";
         for (int col = 0; col < WIDTH; ++col) {
-            cout << board[HEIGHT - row - 1][col] << " ";
+            if (board[HEIGHT - row - 1][col])
+                cout << board[HEIGHT - row - 1][col] << " | ";
+            else
+                cout << "  | ";
         }
         cout << endl;
     }
+    cout << "--1---2---3---4---5---6---7--" << endl;
 }
 
 int Position::who_play_now() const {

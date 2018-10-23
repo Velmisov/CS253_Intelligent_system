@@ -12,25 +12,21 @@ const int HEIGHT = 6;
 const int BOARD_SIZE = WIDTH * HEIGHT;
 
 class Position {
-    int board[HEIGHT][WIDTH];
-    int filled[WIDTH];
-    int number_of_moves;
 
 public:
+    int board[HEIGHT][WIDTH];
+    int number_of_moves;
+    int filled[WIDTH];
+
     Position();
 
-    Position(std::string field);
-
-    int get_number_of_moves() const;
+    explicit Position(std::string field);
 
     bool can_move(int column) const;
 
     void move(int column);
 
-private:
     bool in_border(int column) const;
-
-public:
 
     bool is_winning_move(int column) const;
 
