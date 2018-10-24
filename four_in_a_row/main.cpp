@@ -4,7 +4,7 @@
 using namespace std;
 
 
-const int DEPTH = 10;
+const int DEPTH = 9;
 
 int main() {
 

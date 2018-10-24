@@ -60,7 +60,7 @@ bool Position::is_winning_move(int column) const {
 
 void Position::show() const {
     int last_col = last_move;
-    int last_row = filled[last_move]-1;
+    int last_row = last_move >= 0 ? filled[last_move]-1 : -1;
 
     cout << endl;
     for (int row = HEIGHT-1; row >= 0; --row) {
