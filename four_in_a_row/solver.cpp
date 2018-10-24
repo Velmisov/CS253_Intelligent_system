@@ -112,7 +112,7 @@ int Solver::bestAlpha(int depth, const Position &pos, int player, int barrier) c
             child.move(col);
             alpha = std::max(alpha, -bestAlpha(depth - 1, child, opponent, alpha));
         }
-        if(-alpha < barrier) // ACHTUNG!!!
+        if(-alpha <= barrier) // ACHTUNG!!!
             break;
     }
     return alpha;

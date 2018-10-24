@@ -17,6 +17,7 @@ public:
     int board[HEIGHT][WIDTH];
     int number_of_moves;
     int filled[WIDTH];
+    int last_move;
 
     Position();
 

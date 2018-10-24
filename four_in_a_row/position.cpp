@@ -8,9 +8,9 @@
 using namespace std;
 
 
-Position::Position(): board{0}, filled{0}, number_of_moves(0) {}
+Position::Position(): board{0}, filled{0}, number_of_moves(0), last_move(-1) {}
 
-Position::Position(string field): board{0}, filled{0}, number_of_moves(0) {
+Position::Position(string field): board{0}, filled{0}, number_of_moves(0), last_move(-1) {
     for (auto step : field) {
         move(step - '1');
     }
@@ -24,6 +24,7 @@ void Position::move(int column) {
     board[filled[column]][column] = 1 + (number_of_moves % 2);
     ++filled[column];
     ++number_of_moves;
+    last_move = column;
 }
 
 bool Position::in_border(int column) const {
@@ -58,14 +59,30 @@ bool Position::is_winning_move(int column) const {
 }
 
 void Position::show() const {
+    int last_col = last_move;
+    int last_row = filled[last_move]-1;
+
     cout << endl;
-    for (int row = 0; row < HEIGHT; ++row) {
-        cout << "| ";
+    for (int row = HEIGHT-1; row >= 0; --row) {
+        if(row == last_row && 0 == last_col){
+            cout << "|-";
+        }else{
+            cout << "| ";
+        }
         for (int col = 0; col < WIDTH; ++col) {
-            if (board[HEIGHT - row - 1][col])
-                cout << board[HEIGHT - row - 1][col] << " | ";
+            if (board[row][col])
+                cout << board[row][col];
             else
-                cout << "  | ";
+                cout << " ";
+            if(row == last_row){
+                if(col == last_col)
+                    cout << "-| ";
+                else if(col == last_col-1)
+                    cout << " |-";
+                else
+                    cout << " | ";
+            }else
+                cout << " | ";
         }
         cout << endl;
     }
