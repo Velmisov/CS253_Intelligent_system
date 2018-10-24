@@ -8,7 +8,7 @@ const int DEPTH = 9;
 
 int main() {
 
-    //auto pos = new Position("333333444444");
+    //auto pos = new Position("44445252656655577373337767646");
     auto pos = new Position("");
     pos->show();
 
@@ -17,9 +17,16 @@ int main() {
     int player;
     do {
         cout << "Choose number of player (1 or 2): ";
-        cin >> player;
-        if (player == 1 || player == 2)
+        string buf;
+        cin >> buf;
+        if (buf == "1") {
+            player = 1;
             break;
+        }
+        else if (buf == "2") {
+            player = 2;
+            break;
+        }
         cout << "Retry" << endl;
     } while (true);
 
