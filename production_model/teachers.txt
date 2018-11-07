@@ -1,17 +1,17 @@
-t1 Брагилевский В.Н. // ивэ, твиттер, муж, Haskell, можно списать
-t2 Ерусалимский Я.М. // адм, книга, деканат, доктор, муж, можно списать
-t3 Штейнберг Б.Я.  // адм, старший, муж, можно списать
-t4 Штейнберг О.Б. // адм, младший, муж, можно списать
-t5 Штейнберг Р.Б. // адм, средний, муж
-t6 Михалкович С.С. // твиттер, ивэ, Pascal, Билл Гейтс, муж, можно списать
-t7 Пучкин М.В. // твиттер, пмп, ис, машинка, муж, вы, можно списать
-t8 Гуда С.А. // адм, сисадмин, муж
-t9 Абрамян М.Э. // книга, адм, муж
-t10 Абрамян А.В. // книга, ивэ
-t11 Цывенкова О.А. // вычмат, деканат
-t12 Чернявская И.А. // деканат, можно списать
-t13 Ячменёва Н.Н. // ивэ, нейросети
-t14 Скороходов В.А. // адм, муж, можно списать
-t15 Авсянкин О.Г. // доктор, диу, муж
-t16 Алымова Е.В. // твиттер, адм
-t17 Демяненко Я.М. // твиттер, пмп
+t1 Брагилевский В.Н. : https://pp.userapi.com/c627427/v627427529/30d0d/bSsWneq558U.jpg
+t2 Ерусалимский Я.М. : http://elementy.ru/images/eltperson/uchit_erusalimsky_2009.jpg
+t3 Штейнберг Б.Я. : http://spisok.math.spbu.ru/2013/images/people/Shteiynberg_133.jpg
+t4 Штейнберг О.Б. : https://pp.userapi.com/c9743/u3031643/a_9a96ba88.jpg
+t5 Штейнберг Р.Б. : https://iconeat.com/uploads/495b17e9.jpg
+t6 Михалкович С.С. : http://sfedu.ru/files/upload/per_photo/180x240/8/b/per_id_353_0.JPG
+t7 Пучкин М.В. : http://sfedu.ru/files/upload/per_photo/180x240/f/e/per_id_2397.jpg
+t8 Гуда С.А. : https://static.elitsy.ru/media/cache/ff/13/ff13e028aa7d41fda9fc43b12ef5b38b.jpg
+t9 Абрамян М.Э. : http://sfedu.ru/files/upload/per_photo/180x240/3/d/per_id_7.jpg
+t10 Абрамян А.В. : https://yt3.ggpht.com/-5C3axZrhTtg/AAAAAAAAAAI/AAAAAAAAAAA/JVM8L0hFqYo/s88-c-k-no-mo-rj-c0xffffff/photo.jpg
+t11 Цывенкова О.А. : http://vmmf.math.rsu.ru/images/people_ziva.jpg
+t12 Чернявская И.А. : http://sfedu.ru/files/upload/per_photo/180x240/4/7/per_id_597.jpg
+t13 Ячменёва Н.Н. : http://sfedu.ru/files/upload/per_photo/180x240/7/e/per_id_1475.jpg
+t14 Скороходов В.А. : https://i1.rgstatic.net/ii/profile.image/308121451335681-1450473286618_Q512/Vladimir_Skorokhodov.jpg
+t15 Авсянкин О.Г. : http://sfedu.ru/files/upload/per_photo/180x240/b/2/per_id_9.JPG
+t16 Алымова Е.В. : https://banner2.kisspng.com/20180621/aiq/kisspng-anonymity-person-computer-icons-clip-art-word-of-mouth-5b2b3329865a28.8092811915295578015503.jpg
+t17 Демяненко Я.М. : https://pbs.twimg.com/profile_images/970347697516548097/YCA5J6Z0.jpg
