@@ -1,2 +1,9 @@
-if __name__ == '__main__':
+import mainframe
+
+
+def main():
     pass
+
+
+if __name__ == '__main__':
+    main()
