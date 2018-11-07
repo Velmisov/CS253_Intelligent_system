@@ -1,9 +1,11 @@
-import mainframe
 import tkinter as tk
+from mainframe import Main
 
 
 def main():
-    pass
+    root = tk.Tk()
+    m = Main(root)
+    tk.mainloop()
 
 
 if __name__ == '__main__':
