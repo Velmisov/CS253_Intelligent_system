@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def read_comments():
     d = {}
     with open("teachers.txt", "rt") as f:
@@ -8,10 +9,11 @@ def read_comments():
             comm_id = ls.index("//")
             name = ' '.join(ls[1:comm_id])
             comm_id = l.find('//')
-            comms = [x.strip() for x in l[comm_id+2:].split(', ')]
+            comms = [x.strip() for x in l[comm_id + 2:].split(', ')]
 
             d[name] = comms
     return d
+
 
 def get_features(d):
     f = set()
@@ -19,6 +21,7 @@ def get_features(d):
         for x in d[n]:
             f.add(x)
     return list(f)
+
 
 def feature_entropy(d, f):
     def count_f(x, d):
@@ -31,13 +34,14 @@ def feature_entropy(d, f):
     res = []
     for x in f:
         c = count_f(x, d)
-        p = c/len(d)
+        p = c / len(d)
         if p == 0 or p == 1:
             res.append(-1)
         else:
             res.append(-p * np.log2(p) - (1 - p) * np.log2(1 - p))
     res = np.array(res)
     return f[res.argmax()]
+
 
 def divide(d, x):
     d1 = {}
@@ -49,12 +53,14 @@ def divide(d, x):
             d2[n] = d[n]
     return d1, d2
 
+
 class Node:
     def __init__(self, left, right, d, feature):
         self.left = left
         self.right = right
         self.d = d
         self.feature = feature
+
 
 def build_tree(d, root):
     # print('\n\nbuild', d)
@@ -76,8 +82,10 @@ def build_tree(d, root):
     build_tree(d1, root.left)
     build_tree(d2, root.right)
 
+
 def print_tree(root, fn):
     cnt = 0
+
     def print_node(n, f):
         nonlocal cnt
         tmp = cnt
@@ -104,6 +112,7 @@ def print_tree(root, fn):
         f.write("digraph g{\n")
         print_node(root, f)
         f.write("}\n")
+
 
 d = read_comments()
 root = Node(None, None, d, None)
