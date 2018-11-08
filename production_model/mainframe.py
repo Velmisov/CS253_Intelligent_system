@@ -13,7 +13,7 @@ class Main:
         self.model = prod.ProductionModel(self)
 
         self.question_var = tk.StringVar()
-        self.question = tk.Label(root, textvariable=self.question_var)
+        self.question = tk.Label(root, textvariable=self.question_var, height=10)
         self.question.grid(row=0, column=0, rowspan=1, columnspan=2)
         self.question_var.set("\n\nЗагадайте преподавателя\n\n")
 
@@ -25,28 +25,36 @@ class Main:
 
         self.answer = tk.Label(root)
 
-        self.play_more_button = tk.Button(root, command=self.play, text='Играть ещё', width=60)
+        self.play_more_button = tk.Button(root, command=self.play_more, text='Играть ещё', width=60)
+
+    def play_more(self):
+        self.answer.grid_forget()
+        self.play_more_button.grid_forget()
+        self.question_var.set("\n\nЗагадайте преподавателя\n\n")
+        self.lets_play_button.grid(row=1, column=0)
+        self.model.clear()
 
     def play(self):
-        self.question_var.set("\n\nЗагадайте преподавателя\n\n")
         self.lets_play_button.grid_forget()
         self.answer.grid_forget()
         self.play_more_button.grid_forget()
         self.yes_button.grid(row=1, column=0)
         self.no_button.grid(row=1, column=1)
+        self.model.next_step()
 
     def ask_question(self, question):
         self.question_var.set(question)
 
     def yes(self):
-        self.model.show_answer()
+        self.model.set_answer('Yes')
+        self.model.next_step()
 
     def no(self):
-        pass
+        self.model.set_answer('No')
+        self.model.next_step()
 
-    def put_answer(self, url):
-        response = requests.get(url)
-        im = Image.open(BytesIO(response.content))
+    def put_answer(self, id):
+        im = Image.open('data/' + id)
         self.pim = ImageTk.PhotoImage(im)
         self.answer.configure(image=self.pim)
 
@@ -54,7 +62,8 @@ class Main:
         self.no_button.grid_forget()
         self.answer.grid(row=1, column=0)
         self.play_more_button.grid(row=2, column=0)
-        self.question_var.set('\n\nВы загадали\n\n')
+        self.question_var.set('\n\nВы загадали\n\n' + self.model.teachers_names[id])
+
 
     def set_prod(self, model):
         self.model = model
