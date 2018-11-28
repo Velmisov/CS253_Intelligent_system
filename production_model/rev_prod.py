@@ -4,9 +4,9 @@ import networkx as nx
 
 class ReverseProductionModel:
     def __init__(self):
-        self.read_facts()
-        self.read_teachers()
-        self.read_rules()
+        self.facts = self.read_facts()
+        self.teachers = self.read_teachers()
+        self.G = self.read_rules()
 
     def read_facts(self):
         reg = re.compile(r'(f\d+) (.*)$')
@@ -16,7 +16,7 @@ class ReverseProductionModel:
                 m = reg.match(line)
                 fnum, fdesc = m.groups()
                 res[fnum] = fdesc
-        self.facts = res
+        return res
 
     def read_teachers(self):
         reg = re.compile(r'(t\d+) (.*?):.*$')
@@ -26,7 +26,7 @@ class ReverseProductionModel:
                 m = reg.match(line)
                 tnum, tdesc = m.groups()
                 res[tnum] = tdesc
-        self.teachers = res
+        return res
 
     def read_rules(self):
         G = nx.DiGraph()
@@ -37,26 +37,37 @@ class ReverseProductionModel:
                 rule, premise, cons = m.groups()
                 for p in premise.split(', '):
                     G.add_edge(p, cons, rule=rule)
-        self.G = G
+        return G
 
-    def try_produce(self, t, premises):
+    def try_produce_dfs(self, t, premises):
         def dfs(v):
+            if v in premises or v == 'c0':
+                return True
             rules = {}
             for u in self.G.pred[v]:
-                if u in premises:
-                    return True
-                res = dfs(u)
                 rule = self.G[u][v]['rule']
+                if rule in rules and not rules[rule]:
+                    continue
+                res = dfs(u)
                 if rule in rules:
                     rules[rule] = rules[rule] and res
                 else:
                     rules[rule] = res
-            return len(rules) != 0 and any(rules.values())
+            res = len(rules) != 0 and any(rules.values())
+            # if res:
+            #     print(v)
+            return res
         return dfs(t)
 
 
 if __name__ == "__main__":
+    # from matplotlib import pyplot as plt
     m = ReverseProductionModel()
     print(m.facts)
     print(m.teachers)
-    print(m.try_produce('t1', {'f19'}))
+
+    print(m.try_produce('t1', {'f6', 'f1'}))
+    # l = nx.kamada_kawai_layout(m.G)
+    # nx.draw(m.G, pos=l)
+    # nx.draw_networkx_labels(m.G, pos=l)
+    # plt.show()
