@@ -23,26 +23,6 @@ def get_features(d):
     return list(f)
 
 
-# def feature_entropy(d, f):
-#     def count_f(x, d):
-#         c = 0
-#         for n in d:
-#             if x in d[n]:
-#                 c += 1
-#         return c
-#
-#     res = []
-#     for x in f:
-#         c = count_f(x, d)
-#         p = c / len(d)
-#         if p == 0 or p == 1:
-#             res.append(-1)
-#         else:
-#             res.append(-p * np.log2(p) - (1 - p) * np.log2(1 - p))
-#     res = np.array(res)
-#     return f[res.argmax()]
-
-
 def divide(d, x):
     d1 = {}
     d2 = {}
@@ -74,16 +54,12 @@ checked = set()
 def build_trees(d, root: NodeT, path=frozenset()):
     global tree_depth, checked
 
-
     tree_depth += 1
-    # print('\n\nbuild', d)
-    # print('\n')
     f = get_features(d)
-    # x = feature_entropy(d, f)
     divs = []
     for x in f:
         d1, d2 = divide(d, x)
-        if len(d) == max(len(d1), len(d2)):
+        if len(d) == max(len(d1), len(d2)) and len(d) != 1:
             continue
 
         node = NodeD(
@@ -98,59 +74,21 @@ def build_trees(d, root: NodeT, path=frozenset()):
         )
 
         pth = path.union(frozenset([x]))
-        # b = False
-        # for p in checked:
-        #     if len(p) == len(pth):
-        #         b = True
-        #         for q in pth:
-        #             if not q in p:
-        #                 b = False
-        #                 break
-        #         if b:
-        #             break
-        # if b:
-        #     continue
         if pth in checked:
             continue
         checked.add(pth)
 
-        build_trees(d1, node.left, pth)
-        build_trees(d2, node.right, pth)
-
+        if len(d) != 1:
+            build_trees(d1, node.left, pth)
+            build_trees(d2, node.right, pth)
 
         divs.append(node)
+
+        if len(d) == 1:
+            break
+
     root.divs = divs
 
-
-# def print_trees(root, fn):
-#     cnt = 0
-#
-#     def print_node(n, f):
-#         nonlocal cnt
-#         tmp = cnt
-#
-#         f.write("{}{}->".format(n.feature, cnt))
-#         if n.left.feature == None:
-#             f.write("Leaf{}_{};\n".format(cnt, len(n.left.d)))
-#             cnt += 1
-#         else:
-#             f.write("{}{};\n".format(n.left.feature, cnt))
-#             print_node(n.left, f)
-#             cnt += 1
-#
-#         f.write("{}{}->".format(n.feature, tmp))
-#         if n.right.feature == None:
-#             f.write("Leaf{}_{};\n".format(cnt, len(n.right.d)))
-#             cnt += 1
-#         else:
-#             f.write("{}{};\n".format(n.right.feature, cnt))
-#             print_node(n.right, f)
-#             cnt += 1
-#
-#     with open(fn, "wt") as f:
-#         f.write("digraph g{\n")
-#         print_node(root, f)
-#         f.write("}\n")
 
 def gen_all_rules(fn, root: NodeT):
     cnt_cons = 1
@@ -158,28 +96,36 @@ def gen_all_rules(fn, root: NodeT):
 
     def rec_print(f, node, ncons):
         nonlocal cnt_cons, cnt_rule
+        if node.divs is None:
+            return
+
         for chld in node.divs:
-            chld_cons = cnt_cons
-            f.write("r{} c{} -> c{}\n".format(cnt_rule, ncons, chld_cons))
-            cnt_cons += 1
-            cnt_rule += 1
-            # TODO: do this shit right
-            f.write("r{} c{}, f{} -> c{}\n".format(cnt_rule, chld_cons, chld.feature, cnt_cons))
-            cnt_cons += 1
-            cnt_rule += 1
-            rec_print(f, chld.left, cnt_cons - 1)
-            f.write("r{} c{}, nf{} -> c{}\n".format(cnt_rule, chld_cons, chld.feature, cnt_cons))
-            cnt_cons += 1
-            cnt_rule += 1
-            rec_print(f, chld.right, cnt_cons - 1)
+            if len(chld.d) == 1:
+                f.write("r{} c{}, f{} -> t{}\n".format(
+                    cnt_rule, ncons, chld.feature, list(chld.d.keys())[0].replace(' ', '_').replace('.', '_')
+                ))
+                cnt_rule += 1
+            else:
+                chld_cons = cnt_cons
+                f.write("r{} c{} -> c{}\n".format(cnt_rule, ncons, chld_cons))
+                cnt_cons += 1
+                cnt_rule += 1
+                f.write("r{} c{}, f{} -> c{}\n".format(cnt_rule, chld_cons, chld.feature, cnt_cons))
+                cnt_cons += 1
+                cnt_rule += 1
+                rec_print(f, chld.left, cnt_cons - 1)
+                f.write("r{} c{}, nf{} -> c{}\n".format(cnt_rule, chld_cons, chld.feature, cnt_cons))
+                cnt_cons += 1
+                cnt_rule += 1
+                rec_print(f, chld.right, cnt_cons - 1)
 
     with open(fn, 'wt', encoding='utf-8') as f:
         rec_print(f, root, 0)
 
 
 d = read_comments()
+# print(d)
 root = NodeT([])
 build_trees(d, root)
 print(tree_depth)
-# print_trees(root, "trees.dot")
-gen_all_rules("new_rules.txt", root)
+gen_all_rules("new_rules2.txt", root)

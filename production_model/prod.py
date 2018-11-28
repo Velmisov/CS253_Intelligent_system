@@ -26,14 +26,14 @@ class ProductionModel:
         self.last_fact = ''
 
     def parse_facts(self, fname='facts.txt'):
-        with open(fname, 'r') as f:
+        with open(fname, 'r', encoding='utf-8') as f:
             for line in f.readlines():
                 id, *fact = line.split(' ')
                 fact = ' '.join(fact)
                 self.facts[id] = fact
 
     def parse_teachers(self, fname='teachers.txt'):
-        with open(fname, 'r') as f:
+        with open(fname, 'r', encoding='utf-8') as f:
             for line in f.readlines():
                 id, url = line.split(' : ')
                 id, *name = id.split(' ')
@@ -42,7 +42,7 @@ class ProductionModel:
                 self.teachers_photos[id] = url
 
     def parse_rules(self, fname='rules.txt'):
-        with open(fname, 'r') as f:
+        with open(fname, 'r', encoding='utf-8') as f:
             for line in f.readlines():
                 id, *others = line.split(' ')
                 others = ' '.join(others)
