@@ -3,13 +3,14 @@ import numpy as np
 
 def read_comments():
     d = {}
-    with open("teachers_comments.txt", "rt", encoding='utf-8') as f:
+    with open("teachers_comments_fids.txt", "rt", encoding='utf-8') as f:
         for l in f.readlines():
             ls = l.split()
             comm_id = ls.index("//")
-            name = ' '.join(ls[1:comm_id])
+            # name = ' '.join(ls[1:comm_id])
+            name = ls[0]
             comm_id = l.find('//')
-            comms = [x.strip() for x in l[comm_id + 2:].split(', ')]
+            comms = [x.split(', ')[1].strip('()\n') for x in l[comm_id + 2:].split(')(')]
 
             d[name] = comms
     return d
@@ -101,7 +102,7 @@ def gen_all_rules(fn, root: NodeT):
 
         for chld in node.divs:
             if len(chld.d) == 1:
-                f.write("r{} c{}, f{} -> t{}\n".format(
+                f.write("r{} c{}, {} -> {}\n".format(
                     cnt_rule, ncons, chld.feature, list(chld.d.keys())[0].replace(' ', '_').replace('.', '_')
                 ))
                 cnt_rule += 1
@@ -110,11 +111,11 @@ def gen_all_rules(fn, root: NodeT):
                 f.write("r{} c{} -> c{}\n".format(cnt_rule, ncons, chld_cons))
                 cnt_cons += 1
                 cnt_rule += 1
-                f.write("r{} c{}, f{} -> c{}\n".format(cnt_rule, chld_cons, chld.feature, cnt_cons))
+                f.write("r{} c{}, {} -> c{}\n".format(cnt_rule, chld_cons, chld.feature, cnt_cons))
                 cnt_cons += 1
                 cnt_rule += 1
                 rec_print(f, chld.left, cnt_cons - 1)
-                f.write("r{} c{}, nf{} -> c{}\n".format(cnt_rule, chld_cons, chld.feature, cnt_cons))
+                f.write("r{} c{}, n{} -> c{}\n".format(cnt_rule, chld_cons, chld.feature, cnt_cons))
                 cnt_cons += 1
                 cnt_rule += 1
                 rec_print(f, chld.right, cnt_cons - 1)
